@@ -1,2 +1,3 @@
-package com.nhc.backend.api;public class AuthApiController {
+package com.nhc.backend.api;
+public class AuthApiController {
 }
