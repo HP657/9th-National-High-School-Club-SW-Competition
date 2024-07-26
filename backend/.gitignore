@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+### secret ###
+application.secret.properties
+bubbly-buttress-425610-f3-e48898b1d1a8.json
