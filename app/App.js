@@ -1,18 +1,12 @@
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { Text, View } from 'react-native';
+import FirstPage from './Component/FirstPage';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>그렇지 이게 앱이지 처음에 너무 이상한 프로젝틀를 init 시켰어</Text>
+    <View>
+      {/* <Text> 하이</Text> */}
+      <FirstPage />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
