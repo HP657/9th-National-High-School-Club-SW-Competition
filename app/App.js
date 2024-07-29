@@ -1,12 +1,20 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import FirstPage from './Component/FirstPage';
+import Intro from './Component/Intro';
 
-export default function App() {
+const Stack = createStackNavigator();
+
+const App = () => {
   return (
-    <View>
-      {/* <Text> 하이</Text> */}
-      <FirstPage />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Intro" headerMode="none">
+        <Stack.Screen name="Intro" component={Intro} />
+        <Stack.Screen name="FirstPage" component={FirstPage} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
+};
+
+export default App;
