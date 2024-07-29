@@ -37,9 +37,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     borderRadius: 10,
     width: '40%', 
-    height: (height / (5/1)), // 고정된 높이 설정
+    height: (height / (5/1)),
     marginHorizontal: 10, 
-    justifyContent: 'center', // 버튼 내 텍스트를 세로 중앙 정렬
+    justifyContent: 'center', 
   },
   buttonText: {
     fontSize: 16,
