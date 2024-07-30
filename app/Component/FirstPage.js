@@ -1,5 +1,6 @@
-import React from 'react';
-import { View, Image, StyleSheet, Dimensions, Text, TouchableOpacity } from 'react-native';
+import React, { useRef, useEffect, useState } from 'react';
+import { View, Image, StyleSheet, Dimensions, Text, TouchableOpacity, Animated } from 'react-native';
+import Intro from './Intro';
 
 const img = require('../assets/favicon.png');
 
@@ -7,14 +8,15 @@ const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   mainContainer: {
-    width: width,
-    height: height,
+    flex: 1,
     backgroundColor: 'gray',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   imageContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   textContainer: {
     flex: 1,
@@ -24,6 +26,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
+    marginTop: 20,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -36,10 +39,12 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 10,
-    width: '40%', 
-    height: (height / (5/1)),
-    marginHorizontal: 10, 
-    justifyContent: 'center', 
+    width: '40%',
+    height: height / 4,
+    marginHorizontal: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 60
   },
   buttonText: {
     fontSize: 16,
@@ -52,19 +57,54 @@ const styles = StyleSheet.create({
     height: 200,
     resizeMode: 'contain',
   },
+  introContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 100,
+  },
 });
 
 const FirstPage = () => {
+  const fadeIntroAnim = useRef(new Animated.Value(1)).current;
+  const fadeMainAnim = useRef(new Animated.Value(0)).current;
+  const [introVisible, setIntroVisible] = useState(true);
+
+  useEffect(() => {
+    const introTimeout = setTimeout(() => {
+      Animated.timing(fadeIntroAnim, {
+        toValue: 0,
+        duration: 1000,
+        useNativeDriver: true,
+      }).start(() => {
+        setIntroVisible(false); 
+      });
+    }, 2000);
+
+    const mainTimeout = setTimeout(() => {
+      Animated.timing(fadeMainAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }).start();
+    }, 1000);
+
+    return () => {
+      clearTimeout(introTimeout);
+      clearTimeout(mainTimeout);
+    };
+  }, [fadeIntroAnim, fadeMainAnim]);
+
   const handlePress = () => {
     alert('버튼이 클릭되었습니다!');
   };
-  
+
   return (
     <View style={styles.mainContainer}>
       <View style={styles.imageContainer}>
         <Image source={img} style={styles.image} />
       </View>
-      <View style={styles.textContainer}>
+      <Animated.View style={[styles.textContainer, { opacity: fadeMainAnim }]}>
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={handlePress}>
             <Text style={styles.buttonText}>버튼 1</Text>
@@ -73,7 +113,12 @@ const FirstPage = () => {
             <Text style={styles.buttonText}>버튼 2</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </Animated.View>
+      {introVisible && (
+        <Animated.View style={[styles.introContainer, { opacity: fadeIntroAnim }]}>
+          <Intro />
+        </Animated.View>
+      )}
     </View>
   );
 };
