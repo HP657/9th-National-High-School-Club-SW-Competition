@@ -1,2 +1,9 @@
-package com.nhc.backend.dto.In;public class SignInDto {
+package com.nhc.backend.dto.In;
+
+import lombok.Data;
+
+@Data
+public class SignInDto {
+    private String email;
+    private String password;
 }
