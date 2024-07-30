@@ -6,10 +6,7 @@ import com.nhc.backend.entity.Messages;
 import com.nhc.backend.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -31,5 +28,12 @@ public class ChatRoomApiController {
     @SendTo("/topic/public/{roomId}")
     public Messages sendMessage(@Payload MessageDto messageDto, @DestinationVariable String roomId) {
         return messageService.saveMessage(messageDto);
+    }
+
+    @PostMapping("/{chatRoomId}/send")
+    public ResponseEntity<?> receiveMessageFromFlask(@PathVariable Long chatRoomId, @RequestBody MessageDto messageDto) {
+        messageDto.setChatRoomId(chatRoomId);
+        Messages savedMessage = messageService.saveMessage(messageDto);
+        return ResponseEntity.ok(savedMessage);
     }
 }
