@@ -20,6 +20,7 @@
     "react-dom": "18.2.0",
     "react-native": "0.74.3",
     "react-native-web": "~0.19.10",
+    "sockjs-client": "^1.6.1",
     "websocket": "^1.0.35"
   },
   "devDependencies": {
