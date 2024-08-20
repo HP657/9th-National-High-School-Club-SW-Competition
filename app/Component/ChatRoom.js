@@ -11,7 +11,10 @@ const ChatRoom = () => {
   const flatListRef = useRef(null);
 
   useEffect(() => {
-    fetchUserInfoAndMessages();
+    const fetchData = async () => {
+      await fetchUserInfoAndMessages();
+    };
+    fetchData();
 
     return () => {
       if (stompClient) {
@@ -30,18 +33,8 @@ const ChatRoom = () => {
       setUserInfo(userInfoResult.data);
 
       const chatRoomId = userInfoResult.data.userId;
-      const socket = new SockJS('http://10.0.2.2:8080/ws');
-      const client = Stomp.over(socket);
-
-      client.connect({}, () => {
-        setStompClient(client);
-
-        client.subscribe('/topic/public', (message) => {
-          const parsedMessage = JSON.parse(message.body);
-          setMessages((prevMessages) => [...prevMessages, parsedMessage]);
-          scrollToBottom();
-        });
-      });
+      const client = await setupWebsocketConnection();
+      setStompClient(client);
 
       const messagesResponse = await fetch('http://10.0.2.2:8080/api/chatroom/1/messages');
       if (!messagesResponse.ok) throw new Error('Failed to fetch messages');
@@ -51,6 +44,24 @@ const ChatRoom = () => {
     } catch (error) {
       console.error('Error fetching user info and messages:', error);
     }
+  };
+
+  const setupWebsocketConnection = () => {
+    const socket = new SockJS('http://10.0.2.2:8080/ws');
+    const client = Stomp.over(socket);
+
+    return new Promise((resolve, reject) => {
+      client.connect({}, () => {
+        client.subscribe('/topic/public', (message) => {
+          const parsedMessage = JSON.parse(message.body);
+          setMessages((prevMessages) => [...prevMessages, parsedMessage]);
+          scrollToBottom();
+        });
+        resolve(client);
+      }, (error) => {
+        reject(error);
+      });
+    });
   };
 
   const scrollToBottom = () => {
