@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Getter
-@Setter
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,7 +13,7 @@ public class Users {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String username;
 
     @Column(nullable = false, unique = true)
@@ -23,9 +22,17 @@ public class Users {
     @Column(nullable = false)
     private String password;
 
-    public Users(String username, String email, String password) {
+    @Column(nullable = false)
+    private String departmentName;
+
+    @ManyToOne
+    @JoinColumn(name = "department_id")  // Foreign key 설정
+    private Department department;  // 부서 필드 추가
+
+    public Users(String username, String email, String password, Department department) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.department = department;
     }
 }

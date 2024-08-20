@@ -1,10 +1,11 @@
 package com.nhc.backend.service;
 
-
 import com.nhc.backend.dto.In.SignInDto;
 import com.nhc.backend.dto.In.SignUpDto;
 import com.nhc.backend.dto.Out.Response;
+import com.nhc.backend.entity.Department;
 import com.nhc.backend.entity.Users;
+import com.nhc.backend.repository.DepartmentRepository;
 import com.nhc.backend.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +19,30 @@ public class AuthService {
     private UserRepository userRepository;
 
     @Autowired
+    private DepartmentRepository departmentRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     public Response<String> signup(SignUpDto signUpDto) {
-        Users user = new Users(
-                signUpDto.getUsername(),
-                signUpDto.getEmail(),
-                passwordEncoder.encode(signUpDto.getPassword())
-        );
+        Department department = departmentRepository.findByName(signUpDto.getDepartmentName());
+        if (department == null) {
+            return new Response<>("해당 부서를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+        Users user = Users.builder()
+                .username(signUpDto.getUsername())
+                .email(signUpDto.getEmail())
+                .password(passwordEncoder.encode(signUpDto.getPassword()))
+                .department(department)
+                .departmentName(department.getName())
+                .build();
+
         userRepository.save(user);
+
         return new Response<>("회원가입 성공적", HttpStatus.OK);
     }
+
+
 
     public Response<String> signin(SignInDto signinDto, HttpServletRequest request) {
         Users userByEmail = userRepository.findUserByEmail(signinDto.getEmail());
